@@ -1,3 +1,10 @@
+import { 
+  loginWithGoogle, 
+  logoutUser, 
+  monitorAuthState, 
+  saveExerciseSuccess, 
+  getUserProgress 
+} from './firebase.js';
 // 1. LE STYLE (Indispensable pour Tailwind)
 import './style.css'; 
 
@@ -19,6 +26,8 @@ import { exercices } from './exercices.js';
 let pyodide = null;
 let currentExercise = null;
 let userLogs = [];
+let currentUser = null;
+let completedExercises = new Set(); // Un Set est mieux pour éviter les doublons
 
 // Options pour KaTeX (les délimiteurs $)
 const katexOptions = {
@@ -125,7 +134,12 @@ function renderNavigation() {
       
       // Style "Lien discret"
       btn.className = "block w-full py-2 pl-8 pr-4 text-sm text-left transition-all border-l-2 border-transparent text-slate-500 hover:text-indigo-400 hover:bg-white/5 hover:border-indigo-500";
-      btn.textContent = ex.titre;
+      if (completedExercises.has(ex.id)) {
+    btn.innerHTML = `<span class="text-green-500 mr-2">✓</span> ${ex.titre}`;
+    btn.classList.add("text-indigo-300"); // Légèrement coloré si fini
+    } else {
+    btn.textContent = ex.titre;
+  }
       
       btn.onclick = () => {
         // Retirer la classe 'active' de tous les boutons (si on veut pousser le détail plus tard)
@@ -208,6 +222,18 @@ runBtn.addEventListener('click', async () => {
     if (success) {
       statusMsg.textContent = "✅ Bravo ! Exercice validé.";
       statusMsg.classList.add("bg-green-600");
+      
+      // --- AJOUT FIREBASE ---
+      if (currentUser) {
+        // 1. Sauvegarde locale pour affichage immédiat
+        completedExercises.add(currentExercise.id);
+        updateProgressUI();
+        
+        // 2. Sauvegarde Cloud
+        saveExerciseSuccess(currentUser.uid, currentExercise.id);
+      }
+      // ----------------------
+      
     } else {
       statusMsg.textContent = "❌ Incorrect. Regardez la console.";
       statusMsg.classList.add("bg-red-600");
@@ -220,3 +246,64 @@ runBtn.addEventListener('click', async () => {
     statusMsg.classList.add("bg-yellow-600");
   }
 });
+
+// --- 7. GESTION UTILISATEUR (Firebase) ---
+
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const authOutDiv = document.getElementById('auth-section-logged-out');
+const authInDiv = document.getElementById('auth-section-logged-in');
+const userNameEl = document.getElementById('user-name');
+const userAvatarEl = document.getElementById('user-avatar');
+const progressCountEl = document.getElementById('progress-count');
+
+// Boutons Login / Logout
+loginBtn.addEventListener('click', async () => {
+  try {
+    await loginWithGoogle();
+  } catch (e) {
+    alert("Erreur de connexion");
+  }
+});
+
+logoutBtn.addEventListener('click', async () => {
+  await logoutUser();
+  completedExercises.clear();
+  updateProgressUI();
+});
+
+// Surveillance de l'état (La fonction clé !)
+monitorAuthState(async (user) => {
+  currentUser = user;
+  
+  if (user) {
+    // 1. UI Connecté
+    authOutDiv.classList.add('hidden');
+    authInDiv.classList.remove('hidden');
+    userNameEl.textContent = user.displayName;
+    userAvatarEl.src = user.photoURL;
+
+    // 2. Charger la progression
+    const savedIds = await getUserProgress(user.uid);
+    completedExercises = new Set(savedIds); // On convertit en Set pour manipuler facile
+    updateProgressUI();
+
+  } else {
+    // UI Déconnecté
+    authOutDiv.classList.remove('hidden');
+    authInDiv.classList.add('hidden');
+    completedExercises.clear();
+    updateProgressUI();
+  }
+});
+
+// Fonction pour mettre à jour l'affichage des coches vertes ✅
+function updateProgressUI() {
+  // 1. Mettre à jour le compteur en bas
+  progressCountEl.textContent = completedExercises.size;
+
+  // 2. Parcourir les boutons du menu pour ajouter/retirer le check
+  // Note : Il faudra peut-être adapter renderNavigation pour ajouter des IDs aux boutons
+  // Mais pour l'instant, on va re-rendre la navigation
+  renderNavigation(); 
+}

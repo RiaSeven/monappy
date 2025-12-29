@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "ace-builds": "^1.43.5",
+    "firebase": "^12.7.0",
     "katex": "^0.16.27"
   }
 }
