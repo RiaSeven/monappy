@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>monappy</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+
+<body>
+  <div class="max-w-4xl p-10 mx-auto">
+    <h1 class="mb-6 text-3xl font-bold text-gray-800">
+      Mon Python Playground
+    </h1>
+
+    <div class="p-6 mb-6 bg-white border-l-4 border-indigo-500 rounded-r-lg shadow-md">
+      <h3 class="mb-2 text-lg font-bold text-indigo-600">Exercice : Théorème de Pythagore</h3>
+
+      <p class="mb-4 text-gray-700">
+        On cherche à calculer l'hypoténuse $c$ d'un triangle rectangle.
+        On sait que $a = 3$ et $b = 4$.
+      </p>
+
+      <p class="mb-4 text-gray-700">
+        Utilise la formule suivante :
+      </p>
+
+      <div class="py-2 text-xl text-center">
+        $$ c = \sqrt{a^2 + b^2} $$
+      </div>
+    </div>
+
+    <div id="editor" class="w-full border-2 border-gray-300 rounded-lg shadow-lg h-96"></div>
+
+    <button id="run-btn"
+      class="px-6 py-2 mt-4 font-semibold text-white transition bg-blue-600 rounded hover:bg-blue-700">
+      Chargement de Python...
+    </button>
+
+    <h2 class="mt-8 text-xl font-semibold text-gray-700">Résultat :</h2>
+    <pre id="output"
+      class="w-full h-40 p-4 mt-2 overflow-auto font-mono text-sm text-green-400 bg-gray-900 rounded-lg shadow-inner">
+En attente de l'exécution...
+    </pre>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
