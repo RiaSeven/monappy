@@ -1,53 +1,93 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/monappy/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>monappy</title>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-  <script type="module" crossorigin src="/monappy/assets/index-D7tn9HAT.js"></script>
-  <link rel="stylesheet" crossorigin href="/monappy/assets/index-CbOsHBZE.css">
+  <title>PyTraining - Apprendre Python</title>
+  <script type="module" crossorigin src="/monappy/assets/index-7IzoSY7H.js"></script>
+  <link rel="stylesheet" crossorigin href="/monappy/assets/index-CzPGpqc3.css">
 </head>
 
-<body>
-  <div class="max-w-4xl p-10 mx-auto">
-    <h1 class="mb-6 text-3xl font-bold text-gray-800">
-      Mon Python Playground
-    </h1>
+<body class="flex w-screen h-screen overflow-hidden font-sans bg-gray-50 text-slate-800">
 
-    <div class="p-6 mb-6 bg-white border-l-4 border-indigo-500 rounded-r-lg shadow-md">
-      <h3 class="mb-2 text-lg font-bold text-indigo-600">Exercice : Théorème de Pythagore</h3>
+  <aside class="z-20 flex flex-col shadow-2xl w-72 bg-slate-900 text-slate-300 shrink-0">
 
-      <p class="mb-4 text-gray-700">
-        On cherche à calculer l'hypoténuse $c$ d'un triangle rectangle.
-        On sait que $a = 3$ et $b = 4$.
-      </p>
-
-      <p class="mb-4 text-gray-700">
-        Utilise la formule suivante :
-      </p>
-
-      <div class="py-2 text-xl text-center">
-        $$ c = \sqrt{a^2 + b^2} $$
+    <div class="flex items-center gap-3 p-6 border-b bg-slate-950 border-slate-800">
+      <div
+        class="flex items-center justify-center w-8 h-8 text-lg font-bold text-white rounded bg-gradient-to-br from-indigo-500 to-purple-600">
+        P
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-white">PyTraining</h1>
+        <p class="text-xs font-medium text-slate-500">v1.0 • Interactif</p>
       </div>
     </div>
 
-    <div id="editor" class="w-full border-2 border-gray-300 rounded-lg shadow-lg h-96"></div>
+    <nav id="exercise-list" class="flex-1 overflow-y-auto custom-scrollbar">
+    </nav>
 
-    <button id="run-btn"
-      class="px-6 py-2 mt-4 font-semibold text-white transition bg-blue-600 rounded hover:bg-blue-700">
-      Chargement de Python...
-    </button>
+    <div class="p-4 text-xs text-center border-t bg-slate-950 border-slate-800 text-slate-600">
+      &copy; 2024 PyTraining
+    </div>
+  </aside>
 
-    <h2 class="mt-8 text-xl font-semibold text-gray-700">Résultat :</h2>
-    <pre id="output"
-      class="w-full h-40 p-4 mt-2 overflow-auto font-mono text-sm text-green-400 bg-gray-900 rounded-lg shadow-inner">
-En attente de l'exécution...
-    </pre>
-  </div>
+  <main class="relative flex flex-col flex-1 h-full min-w-0">
 
+    <header class="z-10 px-8 py-6 bg-white border-b border-gray-200 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span id="serie-badge"
+              class="text-[10px] font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-md">
+              Série
+            </span>
+          </div>
+          <h2 id="ex-title" class="text-3xl font-extrabold tracking-tight text-slate-900">Bienvenue</h2>
+        </div>
+
+        <div id="status-msg"
+          class="hidden px-4 py-2 text-sm font-medium transition-all duration-300 transform rounded-md shadow-sm"></div>
+      </div>
+
+      <div id="ex-consigne" class="max-w-3xl mt-4 leading-relaxed text-slate-600">
+        Sélectionnez un exercice dans le menu de gauche pour commencer votre entraînement.
+      </div>
+    </header>
+
+    <div class="flex flex-col flex-1 overflow-hidden bg-gray-100 lg:flex-row">
+
+      <div class="relative flex flex-col flex-1">
+        <div
+          class="flex items-center justify-between px-4 py-2 font-mono text-xs text-gray-400 bg-gray-800 border-b border-gray-700">
+          <span>main.py</span>
+          <span class="text-gray-500">Python 3.11 (Pyodide)</span>
+        </div>
+
+        <div id="editor" class="flex-1"></div>
+
+        <div class="absolute z-10 bottom-6 right-6">
+          <button id="run-btn"
+            class="flex items-center gap-2 py-3 pl-4 pr-6 font-semibold text-white transition-all transform bg-indigo-600 rounded-full shadow-lg group hover:bg-indigo-500 shadow-indigo-500/30 hover:scale-105 active:scale-95">
+            <span class="flex items-center justify-center w-6 h-6 text-xs rounded-full bg-white/20">▶</span>
+            <span>Exécuter & Vérifier</span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="h-64 lg:h-auto lg:w-[400px] bg-[#1e1e1e] text-slate-300 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-700 shadow-inner">
+        <div
+          class="px-4 py-2 bg-[#191919] border-b border-[#333] text-gray-500 text-xs uppercase font-bold tracking-wider flex items-center gap-2">
+          <span class="w-2 h-2 bg-gray-600 rounded-full"></span> Terminal
+        </div>
+        <pre id="output"
+          class="flex-1 p-4 overflow-auto font-mono text-sm leading-6 selection:bg-indigo-500 selection:text-white"></pre>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 </body>
 
 </html>
