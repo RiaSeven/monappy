@@ -1,103 +1,200 @@
-import './style.css'
+// 1. LE STYLE (Indispensable pour Tailwind)
+import './style.css'; 
+
+// 2. ACE EDITOR
 import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-monokai';
-// ... tes imports Ace ...
+
+// 3. KATEX (MATHS)
 import katex from 'katex';
-import 'katex/dist/katex.min.css'; // Le fichier CSS qui rend les maths jolies
-// NOUVEAU : On importe l'extension d'auto-rendu
+import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render';
-// --- 1. CONFIGURATION DE L'ÉDITEUR (Comme avant) ---
+
+// 4. DONNÉES
+
+import { exercices } from './exercices.js';
+
+// --- CONFIGURATION ---
+let pyodide = null;
+let currentExercise = null;
+let userLogs = [];
+
+// Options pour KaTeX (les délimiteurs $)
+const katexOptions = {
+  delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+  ],
+  ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+};
+
+// 1. Initialisation de l'éditeur
 const editor = ace.edit("editor");
 editor.setTheme("ace/theme/monokai");
 editor.session.setMode("ace/mode/python");
 editor.setFontSize(16);
-editor.setValue("const codeDefaut = # Calcul de l'hypoténuse");
+editor.setValue("# Chargement...", 1);
 
-// --- CONFIGURATION KATEX (MATHS) ---
-
-document.addEventListener("DOMContentLoaded", function() {
-    renderMathInElement(document.body, {
-      // Ici, on définit quels symboles déclenchent les maths
-      delimiters: [
-          {left: '$$', right: '$$', display: true},  // $$ pour les grosses formules centrées
-          {left: '$', right: '$', display: false},   // $ pour les formules dans le texte
-          {left: '\\(', right: '\\)', display: false}, // Alternative classique \( ... \)
-          {left: '\\[', right: '\\]', display: true}   // Alternative classique \[ ... \]
-      ],
-      // Options pour ignorer certaines balises (comme l'éditeur de code !)
-      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
-    });
-});
-
-// --- 2. GESTION DE L'AFFICHAGE (Console Output) ---
+// Éléments DOM
 const outputElement = document.getElementById('output');
 const runBtn = document.getElementById('run-btn');
+const navList = document.getElementById('exercise-list');
+const statusMsg = document.getElementById('status-msg');
+const consigneElement = document.getElementById('ex-consigne');
 
-// Une petite fonction utilitaire pour écrire dans notre écran noir
+// --- 2. GESTION DE PYODIDE ---
+
 function addToOutput(text) {
-  // On ajoute le texte + un saut de ligne
   outputElement.textContent += text + "\n";
-  // On scrolle automatiquement vers le bas si le texte est long
   outputElement.scrollTop = outputElement.scrollHeight;
+  userLogs.push(text.trim());
 }
 
 function clearOutput() {
   outputElement.textContent = "";
+  userLogs = [];
 }
 
-// --- 3. CHARGEMENT DE PYODIDE (La partie complexe) ---
-
-let pyodide = null; // Cette variable contiendra notre "cerveau" Python une fois chargé
-
 async function initPyodide() {
-  try {
-    // 'await' signifie : "Pause ici, et attends que loadPyodide ait fini son travail"
-    // loadPyodide vient du script CDN qu'on a mis dans le HTML
-    pyodide = await loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
-      // Ici, on capture les 'print()' de Python pour les envoyer vers notre fonction
-      stdout: (text) => addToOutput(text),
-      stderr: (text) => addToOutput("Erreur : " + text),
+  runBtn.textContent = "Chargement Python...";
+  runBtn.disabled = true;
+  
+  pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
+    stdout: (text) => addToOutput(text),
+    stderr: (text) => addToOutput("❌ " + text),
+  });
+
+  runBtn.textContent = "▶ Exécuter & Vérifier";
+  runBtn.disabled = false;
+  
+  // Charge le premier exercice une fois Python prêt
+  loadExercise(exercices[0]);
+}
+
+initPyodide();
+
+// --- 3. NAVIGATION ---
+
+function renderNavigation() {
+  const series = {};
+  exercices.forEach(ex => {
+    if (!series[ex.serie]) series[ex.serie] = [];
+    series[ex.serie].push(ex);
+  });
+
+  navList.innerHTML = "";
+  
+  for (const [serieName, exos] of Object.entries(series)) {
+    const details = document.createElement('details');
+    details.open = true;
+    details.className = "mb-2 group"; // Un peu d'espace entre les groupes
+    
+    const summary = document.createElement('summary');
+    summary.className = "flex items-center justify-between p-2 font-bold text-gray-400 bg-gray-800 cursor-pointer select-none hover:text-white";
+    summary.textContent = serieName;
+    details.appendChild(summary);
+
+    const ul = document.createElement('ul');
+    ul.className = "pl-2 mt-1 ml-2 space-y-1 border-l-2 border-gray-700";
+    
+    exos.forEach(ex => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.className = "w-full px-3 py-2 text-sm text-left text-gray-300 transition rounded hover:bg-gray-700 hover:text-white";
+      btn.textContent = ex.titre; // Juste le titre
+      
+      btn.onclick = () => loadExercise(ex);
+      
+      li.appendChild(btn);
+      ul.appendChild(li);
     });
 
-    // Une fois fini :
-    runBtn.textContent = "Exécuter le code ▶";
-    runBtn.disabled = false; // On active le bouton
-    clearOutput();
-    addToOutput(">>> Python est prêt !");
-    
-  } catch (err) {
-    addToOutput("Erreur lors du chargement de Pyodide : " + err);
+    details.appendChild(ul);
+    navList.appendChild(details);
   }
 }
 
-// On lance le chargement dès que la page s'ouvre
-initPyodide();
+renderNavigation();
 
+// --- 4. CHARGEMENT D'UN EXERCICE ---
 
-// --- 4. EXÉCUTION DU CODE ---
+function loadExercise(ex) {
+  currentExercise = ex;
+  
+  // UI Updates
+  document.getElementById('serie-badge').textContent = ex.serie;
+  document.getElementById('ex-title').textContent = ex.titre;
+  
+  // 1. On injecte le HTML de la consigne (qui contient peut-être des $...$)
+  consigneElement.innerHTML = ex.consigne;
+  
+  // 2. IMPORTANT : On demande à KaTeX de scanner juste cette zone
+  renderMathInElement(consigneElement, katexOptions);
+  
+  // Reset
+  statusMsg.className = "hidden";
+  clearOutput();
+  editor.setValue(ex.code, 1);
+}
+
+// --- 5. VALIDATION ---
+
+async function checkSuccess(ex) {
+  if (ex.validation.type === "output_list") {
+    const expected = ex.validation.values;
+    const isSuccess = JSON.stringify(userLogs) === JSON.stringify(expected);
+    
+    if (!isSuccess) {
+      addToOutput(`\n⚠️ ATTENDU : ${JSON.stringify(expected)}`);
+      addToOutput(`⚠️ OBTENU : ${JSON.stringify(userLogs)}`);
+    }
+    return isSuccess;
+  }
+
+  if (ex.validation.type === "function") {
+    try {
+      const tests = ex.validation.tests.join("\n");
+      await pyodide.runPythonAsync(tests);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+  
+  return false;
+}
+
+// --- 6. EXÉCUTION ---
 
 runBtn.addEventListener('click', async () => {
-  if (!pyodide) return; // Sécurité si Python n'est pas prêt
-
-  // 1. On nettoie l'écran précédent
-  clearOutput();
+  if (!pyodide || !currentExercise) return;
   
-  // 2. On récupère le code de l'éditeur
-  const codePython = editor.getValue();
+  clearOutput();
+  const codeUtilisateur = editor.getValue();
+  statusMsg.className = "hidden";
 
   try {
-    // 3. On demande à Pyodide d'exécuter le code
-    addToOutput(">>> Exécution...");
+    await pyodide.runPythonAsync(codeUtilisateur);
+    const success = await checkSuccess(currentExercise);
+
+    statusMsg.classList.remove("hidden", "bg-green-600", "bg-red-600", "bg-yellow-600");
     
-    // runPythonAsync est mieux pour éviter de bloquer le navigateur si le calcul est long
-    await pyodide.runPythonAsync(codePython);
-    
-    addToOutput(">>> Terminé.");
-    
-  } catch (error) {
-    // Si l'utilisateur a fait une erreur de syntaxe en Python
-    addToOutput("ERREUR PYTHON :\n" + error);
+    if (success) {
+      statusMsg.textContent = "✅ Bravo ! Exercice validé.";
+      statusMsg.classList.add("bg-green-600");
+    } else {
+      statusMsg.textContent = "❌ Incorrect. Regardez la console.";
+      statusMsg.classList.add("bg-red-600");
+    }
+
+  } catch (err) {
+    addToOutput("\n🔥 Erreur : " + err);
+    statusMsg.textContent = "⚠️ Erreur de code";
+    statusMsg.classList.remove("hidden");
+    statusMsg.classList.add("bg-yellow-600");
   }
 });
