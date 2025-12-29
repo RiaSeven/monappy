@@ -1,58 +1,86 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>monappy</title>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+  <title>PyTraining - Apprendre Python</title>
 </head>
 
-<body class="flex h-screen overflow-hidden bg-gray-100">
+<body class="flex w-screen h-screen overflow-hidden font-sans bg-gray-50 text-slate-800">
 
-  <aside class="z-10 flex flex-col w-64 text-white bg-gray-900 shadow-xl">
-    <div class="p-4 bg-gray-800 border-b border-gray-700">
-      <h1 class="text-xl font-bold text-blue-400">PyTraining 🐍</h1>
-      <p class="mt-1 text-xs text-gray-400">60 exercices progressifs</p>
+  <aside class="z-20 flex flex-col shadow-2xl w-72 bg-slate-900 text-slate-300 shrink-0">
+
+    <div class="flex items-center gap-3 p-6 border-b bg-slate-950 border-slate-800">
+      <div
+        class="flex items-center justify-center w-8 h-8 text-lg font-bold text-white rounded bg-gradient-to-br from-indigo-500 to-purple-600">
+        P
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-white">PyTraining</h1>
+        <p class="text-xs font-medium text-slate-500">v1.0 • Interactif</p>
+      </div>
     </div>
 
-    <nav id="exercise-list" class="flex-1 p-2 space-y-4 overflow-y-auto">
+    <nav id="exercise-list" class="flex-1 overflow-y-auto custom-scrollbar">
     </nav>
+
+    <div class="p-4 text-xs text-center border-t bg-slate-950 border-slate-800 text-slate-600">
+      &copy; 2024 PyTraining
+    </div>
   </aside>
 
-  <main class="relative flex flex-col flex-1 h-full">
+  <main class="relative flex flex-col flex-1 h-full min-w-0">
 
-    <div class="p-6 bg-white border-b shadow-sm">
+    <header class="z-10 px-8 py-6 bg-white border-b border-gray-200 shadow-sm">
       <div class="flex items-start justify-between">
         <div>
-          <span id="serie-badge"
-            class="px-2 py-1 text-xs font-semibold tracking-wider text-indigo-600 uppercase bg-indigo-100 rounded">Série</span>
-          <h2 id="ex-title" class="mt-2 text-2xl font-bold text-gray-800">Sélectionnez un exercice</h2>
+          <div class="flex items-center gap-3 mb-2">
+            <span id="serie-badge"
+              class="text-[10px] font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-md">
+              Série
+            </span>
+          </div>
+          <h2 id="ex-title" class="text-3xl font-extrabold tracking-tight text-slate-900">Bienvenue</h2>
         </div>
-        <div id="status-msg" class="hidden px-4 py-2 font-bold text-white rounded"></div>
+
+        <div id="status-msg"
+          class="hidden px-4 py-2 text-sm font-medium transition-all duration-300 transform rounded-md shadow-sm"></div>
       </div>
 
-      <div id="ex-consigne" class="mt-4 prose text-gray-600">
-        Utilisez le menu à gauche pour commencer.
+      <div id="ex-consigne" class="max-w-3xl mt-4 leading-relaxed text-slate-600">
+        Sélectionnez un exercice dans le menu de gauche pour commencer votre entraînement.
       </div>
-    </div>
+    </header>
 
-    <div class="flex flex-col flex-1 overflow-hidden lg:flex-row">
+    <div class="flex flex-col flex-1 overflow-hidden bg-gray-100 lg:flex-row">
 
-      <div class="flex flex-col flex-1 border-r border-gray-300">
-        <div id="editor" class="flex-1 text-base"></div>
-        <div class="flex justify-end p-2 bg-gray-100 border-t">
+      <div class="relative flex flex-col flex-1">
+        <div
+          class="flex items-center justify-between px-4 py-2 font-mono text-xs text-gray-400 bg-gray-800 border-b border-gray-700">
+          <span>main.py</span>
+          <span class="text-gray-500">Python 3.11 (Pyodide)</span>
+        </div>
+
+        <div id="editor" class="flex-1"></div>
+
+        <div class="absolute z-10 bottom-6 right-6">
           <button id="run-btn"
-            class="flex items-center gap-2 px-6 py-2 font-semibold text-white transition bg-green-600 rounded shadow hover:bg-green-700">
-            <span>▶ Exécuter & Vérifier</span>
+            class="flex items-center gap-2 py-3 pl-4 pr-6 font-semibold text-white transition-all transform bg-indigo-600 rounded-full shadow-lg group hover:bg-indigo-500 shadow-indigo-500/30 hover:scale-105 active:scale-95">
+            <span class="flex items-center justify-center w-6 h-6 text-xs rounded-full bg-white/20">▶</span>
+            <span>Exécuter & Vérifier</span>
           </button>
         </div>
       </div>
 
-      <div class="flex flex-col h-64 font-mono text-sm text-gray-300 bg-gray-900 lg:h-auto lg:w-1/3">
-        <div class="p-2 text-xs font-bold tracking-wider text-gray-500 uppercase bg-black">Terminal</div>
-        <pre id="output" class="flex-1 p-4 overflow-auto whitespace-pre-wrap"></pre>
+      <div
+        class="h-64 lg:h-auto lg:w-[400px] bg-[#1e1e1e] text-slate-300 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-700 shadow-inner">
+        <div
+          class="px-4 py-2 bg-[#191919] border-b border-[#333] text-gray-500 text-xs uppercase font-bold tracking-wider flex items-center gap-2">
+          <span class="w-2 h-2 bg-gray-600 rounded-full"></span> Terminal
+        </div>
+        <pre id="output"
+          class="flex-1 p-4 overflow-auto font-mono text-sm leading-6 selection:bg-indigo-500 selection:text-white"></pre>
       </div>
     </div>
   </main>

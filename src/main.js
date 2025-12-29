@@ -79,6 +79,8 @@ initPyodide();
 
 // --- 3. NAVIGATION ---
 
+// --- NAVIGATION (Nouveau Design) ---
+
 function renderNavigation() {
   const series = {};
   exercices.forEach(ex => {
@@ -88,26 +90,47 @@ function renderNavigation() {
 
   navList.innerHTML = "";
   
+  // Pour savoir quelle série ouvrir par défaut (la première)
+  let isFirstSerie = true;
+
   for (const [serieName, exos] of Object.entries(series)) {
     const details = document.createElement('details');
-    details.open = true;
-    details.className = "mb-2 group"; // Un peu d'espace entre les groupes
+    // On ouvre seulement la première série par défaut
+    if (isFirstSerie) {
+      details.open = true;
+      isFirstSerie = false;
+    }
+    details.className = "border-b group border-slate-800";
     
+    // Le résumé (Titre de la série)
     const summary = document.createElement('summary');
-    summary.className = "flex items-center justify-between p-2 font-bold text-gray-400 bg-gray-800 cursor-pointer select-none hover:text-white";
-    summary.textContent = serieName;
+    summary.className = "flex items-center justify-between p-4 font-semibold list-none transition-colors outline-none cursor-pointer select-none text-slate-400 hover:text-white hover:bg-slate-800";
+    
+    // On utilise un petit SVG ou un caractère pour la flèche
+    // La classe group-open:rotate-90 gère la rotation automatique
+    summary.innerHTML = `
+      <span>${serieName}</span>
+      <span class="transform transition-transform duration-200 group-open:rotate-90 text-xs">▶</span>
+    `;
+    
     details.appendChild(summary);
 
+    // La liste des exercices
     const ul = document.createElement('ul');
-    ul.className = "pl-2 mt-1 ml-2 space-y-1 border-l-2 border-gray-700";
+    ul.className = "pb-2 bg-slate-950"; // Fond un peu plus foncé pour les sous-éléments
     
     exos.forEach(ex => {
       const li = document.createElement('li');
       const btn = document.createElement('button');
-      btn.className = "w-full px-3 py-2 text-sm text-left text-gray-300 transition rounded hover:bg-gray-700 hover:text-white";
-      btn.textContent = ex.titre; // Juste le titre
       
-      btn.onclick = () => loadExercise(ex);
+      // Style "Lien discret"
+      btn.className = "block w-full py-2 pl-8 pr-4 text-sm text-left transition-all border-l-2 border-transparent text-slate-500 hover:text-indigo-400 hover:bg-white/5 hover:border-indigo-500";
+      btn.textContent = ex.titre;
+      
+      btn.onclick = () => {
+        // Retirer la classe 'active' de tous les boutons (si on veut pousser le détail plus tard)
+        loadExercise(ex);
+      };
       
       li.appendChild(btn);
       ul.appendChild(li);
@@ -117,7 +140,6 @@ function renderNavigation() {
     navList.appendChild(details);
   }
 }
-
 renderNavigation();
 
 // --- 4. CHARGEMENT D'UN EXERCICE ---
