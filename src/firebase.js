@@ -4,7 +4,10 @@ import {
   signInWithPopup, 
   GoogleAuthProvider, 
   signOut,
-  onAuthStateChanged 
+  onAuthStateChanged,
+  // NOUVEAUX IMPORTS :
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import { 
   getFirestore, 
@@ -51,6 +54,28 @@ export async function logoutUser() {
 // Surveiller si l'utilisateur est connecté ou pas
 export function monitorAuthState(callback) {
   onAuthStateChanged(auth, callback);
+}
+
+// --- NOUVELLES FONCTIONS ---
+
+// Créer un compte Email/Mdp
+export async function registerUser(email, password) {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Se connecter Email/Mdp
+export async function loginUser(email, password) {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (error) {
+    throw error;
+  }
 }
 
 // --- 4. GESTION DES DONNÉES UTILISATEUR (Firestore) ---

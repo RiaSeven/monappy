@@ -3,7 +3,9 @@ import {
   logoutUser, 
   monitorAuthState, 
   saveExerciseSuccess, 
-  getUserProgress 
+  getUserProgress,
+  registerUser,   // Nouveau
+  loginUser       // Nouveau 
 } from './firebase.js';
 // 1. LE STYLE (Indispensable pour Tailwind)
 import './style.css'; 
@@ -247,45 +249,135 @@ runBtn.addEventListener('click', async () => {
   }
 });
 
-// --- 7. GESTION UTILISATEUR (Firebase) ---
+// --- 7. GESTION UTILISATEUR & MODALE ---
 
-const loginBtn = document.getElementById('login-btn');
+// Éléments UI existants
+const openModalBtn = document.getElementById('open-auth-modal-btn'); // Renommé dans le HTML
 const logoutBtn = document.getElementById('logout-btn');
 const authOutDiv = document.getElementById('auth-section-logged-out');
 const authInDiv = document.getElementById('auth-section-logged-in');
 const userNameEl = document.getElementById('user-name');
-const userAvatarEl = document.getElementById('user-avatar');
 const progressCountEl = document.getElementById('progress-count');
 
-// Boutons Login / Logout
-loginBtn.addEventListener('click', async () => {
+// Éléments de la Modale
+const modal = document.getElementById('auth-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const modalOverlay = document.getElementById('modal-overlay');
+const googleLoginBtn = document.getElementById('google-login-btn');
+
+// Formulaire
+const emailInput = document.getElementById('email-input');
+const passwordInput = document.getElementById('password-input');
+const loginSubmitBtn = document.getElementById('btn-login-submit');
+const registerSubmitBtn = document.getElementById('btn-register-submit');
+const authErrorMsg = document.getElementById('auth-error-msg');
+
+// --- FONCTIONS MODALE ---
+
+function toggleModal(show) {
+  if (show) {
+    modal.classList.remove('hidden');
+    emailInput.focus(); // Focus direct sur l'email
+  } else {
+    modal.classList.add('hidden');
+    authErrorMsg.classList.add('hidden'); // Reset erreur
+    emailInput.value = ""; // Reset champs
+    passwordInput.value = "";
+  }
+}
+
+// Ouvrir / Fermer
+openModalBtn.addEventListener('click', () => toggleModal(true));
+closeModalBtn.addEventListener('click', () => toggleModal(false));
+modalOverlay.addEventListener('click', () => toggleModal(false)); // Clic à l'extérieur ferme
+
+// --- LOGIQUE AUTHENTIFICATION ---
+
+
+// 1. Google (Dans la modale)
+googleLoginBtn.addEventListener('click', async () => {
   try {
     await loginWithGoogle();
+    toggleModal(false); 
   } catch (e) {
-    alert("Erreur de connexion");
+    showError("Erreur Google : " + e.message);
   }
 });
 
+// 2. Se Connecter (Email/Mdp)
+loginSubmitBtn.addEventListener('click', async (e) => {
+  e.preventDefault(); 
+  const email = emailInput.value;
+  const pass = passwordInput.value;
+  
+  try {
+    await loginUser(email, pass);
+    toggleModal(false);
+  } catch (error) {
+    handleAuthError(error);
+  }
+});
+
+// 3. Créer un compte (Email/Mdp)
+registerSubmitBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = emailInput.value;
+  const pass = passwordInput.value;
+
+  try {
+    await registerUser(email, pass);
+    toggleModal(false);
+    alert("Compte créé avec succès !");
+  } catch (error) {
+    handleAuthError(error);
+  }
+});
+
+// 4. Déconnexion
 logoutBtn.addEventListener('click', async () => {
   await logoutUser();
   completedExercises.clear();
   updateProgressUI();
 });
 
-// Surveillance de l'état (La fonction clé !)
+// --- GESTION DES ERREURS ---
+
+function showError(msg) {
+  authErrorMsg.textContent = msg;
+  authErrorMsg.classList.remove('hidden');
+}
+
+function handleAuthError(error) {
+  console.error(error);
+  if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+    showError("Email ou mot de passe incorrect.");
+  } else if (error.code === 'auth/email-already-in-use') {
+    showError("Cet email est déjà utilisé.");
+  } else if (error.code === 'auth/weak-password') {
+    showError("Le mot de passe doit faire au moins 6 caractères.");
+  } else {
+    showError("Erreur : " + error.message);
+  }
+}
+
+// --- SURVEILLANCE ÉTAT ---
+
 monitorAuthState(async (user) => {
   currentUser = user;
   
   if (user) {
-    // 1. UI Connecté
+    // UI Connecté
     authOutDiv.classList.add('hidden');
     authInDiv.classList.remove('hidden');
-    userNameEl.textContent = user.displayName;
-    userAvatarEl.src = user.photoURL;
+    
+    // Nom et Avatar
+    userNameEl.textContent = user.displayName || user.email.split('@')[0];
+    const defaultAvatar = "https://ui-avatars.com/api/?background=random&name=" + (user.displayName || user.email);
+    document.getElementById('user-avatar').src = user.photoURL || defaultAvatar;
 
-    // 2. Charger la progression
+    // Charger la progression
     const savedIds = await getUserProgress(user.uid);
-    completedExercises = new Set(savedIds); // On convertit en Set pour manipuler facile
+    completedExercises = new Set(savedIds);
     updateProgressUI();
 
   } else {
@@ -297,13 +389,12 @@ monitorAuthState(async (user) => {
   }
 });
 
-// Fonction pour mettre à jour l'affichage des coches vertes ✅
+// --- FONCTION MISE À JOUR UI (Indispensable !) ---
+
 function updateProgressUI() {
   // 1. Mettre à jour le compteur en bas
   progressCountEl.textContent = completedExercises.size;
 
-  // 2. Parcourir les boutons du menu pour ajouter/retirer le check
-  // Note : Il faudra peut-être adapter renderNavigation pour ajouter des IDs aux boutons
-  // Mais pour l'instant, on va re-rendre la navigation
+  // 2. Re-dessiner le menu pour afficher les coches vertes
   renderNavigation(); 
 }
