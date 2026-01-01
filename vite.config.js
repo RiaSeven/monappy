@@ -1,9 +1,22 @@
+import { resolve } from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  // IMPORTANT : Remplace 'mon-app-python' par le nom EXACT de ton futur dépôt GitHub
+  // 1. INDISPENSABLE POUR GITHUB PAGES
+  // (Si ton dépôt s'appelle "monappy", garde ça. Sinon, mets le nom de ton dépôt)
   base: '/monappy/', 
+  
   build: {
-    target: 'esnext' // Optimisation pour les navigateurs récents (nécessaire pour Pyodide)
-  }
+    // 2. INDISPENSABLE POUR PYODIDE (Python)
+    target: 'esnext',
+
+    // 3. INDISPENSABLE POUR LE MULTI-PAGES (Nouveau)
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),      // Accueil
+        exercices: resolve(__dirname, 'exercices.html'), // Page Exos
+        cours: resolve(__dirname, 'cours.html'),     // Page Cours
+      },
+    },
+  },
 })

@@ -28,3 +28,27 @@ html, body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #475569; /* slate-600 */
 }
+
+:root {
+  --font-display: 'Archivo Black', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #0A0F1E; /* Bleu nuit profond */
+  color: #e2e8f0;
+}
+
+/* Classe utilitaire pour l'effet Verre (Glassmorphism) */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Bordure subtile */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 { font-family: var(--font-display); }
+code, pre { font-family: var(--font-code); }
