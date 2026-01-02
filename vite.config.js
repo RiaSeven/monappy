@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     // 2. INDISPENSABLE POUR PYODIDE (Python)
     target: 'esnext',
-
+    outDir: 'dist',
     // 3. INDISPENSABLE POUR LE MULTI-PAGES (Nouveau)
     rollupOptions: {
       input: {
