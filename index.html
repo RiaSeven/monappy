@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PyTraining - Apprendre Python</title>
+  <title>PyTraining - Apprenez Python</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -12,12 +12,11 @@
     rel="stylesheet">
 </head>
 
-<body class="bg-[#0A0F1E] text-white pt-20">
+<body class="bg-[#0A0F1E] text-white min-h-screen overflow-y-auto font-sans antialiased">
+
   <nav
     class="fixed top-0 left-0 w-full h-16 z-50 border-b border-white/5 bg-[#0A0F1E]/95 backdrop-blur-md flex flex-col justify-center">
-
     <div class="flex items-center justify-between w-full px-6">
-
       <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='./index.html'">
         <div
           class="flex items-center justify-center w-8 h-8 font-bold text-white rounded bg-gradient-to-br from-indigo-500 to-purple-600 font-display">
@@ -29,7 +28,7 @@
         <a href="./cours.html"
           class="px-3 py-2 text-sm font-medium text-gray-300 transition rounded-md hover:text-white">Cours</a>
         <a href="./exercices.html"
-          class="px-3 py-2 text-sm font-medium text-white transition rounded-md bg-white/10">Exercices</a>
+          class="px-3 py-2 text-sm font-medium text-gray-300 transition rounded-md hover:text-white">Exercices</a>
         <button id="nav-auth-btn"
           class="px-4 py-2 text-sm font-bold text-white transition bg-indigo-600 rounded-full shadow-lg hover:bg-indigo-500 shadow-indigo-500/20">
           Connexion
@@ -57,69 +56,98 @@
       </div>
     </div>
   </nav>
-  <main class="px-4 py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+  <main class="px-6 pt-24 pb-12 mx-auto max-w-7xl">
+
+    <div id="hero-gamification" class="hidden mb-12 animate-fade-in">
+      <div
+        class="bg-gradient-to-r from-[#1e1e2e] to-[#0f0f15] border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none">
+        </div>
+
+        <div class="relative">
+          <img id="hero-avatar" src="" alt="Avatar"
+            class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#0A0F1E] shadow-2xl z-10 relative">
+
+          <div id="hero-rank-badge"
+            class="absolute -bottom-2 -right-2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full border border-[#0A0F1E] z-20 shadow-lg">
+            Niv. ?
+          </div>
+        </div>
+
+        <div class="z-10 flex-1 w-full text-center md:text-left">
+          <h2 class="mb-1 text-2xl text-white md:text-3xl font-display">Salut, <span id="hero-username"
+              class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Hacker</span></h2>
+          <p id="hero-rank-name" class="mb-4 font-mono text-sm tracking-widest uppercase md:text-base text-slate-400">
+            Analyse du profil...</p>
+          <div class="relative w-full h-4 overflow-hidden rounded-full shadow-inner bg-slate-800">
+            <div id="hero-progress-bar"
+              class="absolute top-0 left-0 h-full transition-all duration-1000 ease-out bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500"
+              style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between mt-2 font-mono text-xs text-slate-500">
+            <span id="hero-progress-text">0% Complété</span>
+            <span>Objectif: God Mode</span>
+          </div>
+        </div>
+
+        <a href="./exercices.html"
+          class="flex items-center gap-2 px-6 py-3 font-bold text-white transition border bg-white/5 hover:bg-white/10 border-white/10 rounded-xl group">
+          Continuer
+          <svg class="w-4 h-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+      </div>
+    </div>
 
     <div class="mb-16 text-center">
       <h1
-        class="mb-4 text-5xl text-transparent md:text-7xl font-display bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-indigo-500">
-        Maîtrise Python.
+        class="mb-6 text-5xl font-bold tracking-tight text-transparent md:text-7xl font-display bg-clip-text bg-gradient-to-b from-white to-slate-400">
+        Maîtrisez Python.<br />Devenez un Expert.
       </h1>
-      <p class="max-w-2xl mx-auto text-xl font-light text-slate-400">
-        La plateforme interactive pour apprendre l'algorithmique au lycée. Cours structurés, exercices corrigés et
-        progression en temps réel.
+      <p class="max-w-2xl mx-auto mb-8 text-xl leading-relaxed text-slate-400">
+        Une plateforme interactive pour apprendre le code, réaliser des défis et suivre votre progression.
       </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[200px]">
-
-      <div
-        class="flex flex-col justify-between p-8 transition duration-500 glass-panel rounded-3xl md:row-span-2 group hover:border-indigo-500/30">
-        <div>
-          <span class="text-xs tracking-wider text-indigo-400 uppercase font-code">Learning Path</span>
-          <h2 class="mt-2 mb-4 text-3xl">Cours Complets</h2>
-          <p class="text-sm leading-relaxed text-slate-400">De l'introduction aux variables jusqu'aux graphiques
-            complexes avec Matplotlib. Tout est expliqué simplement.</p>
-        </div>
+      <div class="flex flex-col justify-center gap-4 sm:flex-row">
         <a href="./cours.html"
-          class="inline-flex items-center mt-4 font-bold text-white transition group-hover:translate-x-2">
-          Commencer à lire <span class="ml-2">→</span>
+          class="flex items-center justify-center gap-2 px-8 py-4 font-bold text-white transition bg-indigo-600 rounded-full shadow-lg hover:bg-indigo-500 shadow-indigo-500/25">
+          Commencer à lire
         </a>
-        <div class="absolute bottom-0 right-0 w-32 h-32 bg-indigo-600/20 blur-[50px] rounded-full"></div>
+        <a href="./exercices.html"
+          class="flex items-center justify-center gap-2 px-8 py-4 font-bold text-white transition border rounded-full bg-white/5 hover:bg-white/10 border-white/10">
+          Lancer l'éditeur
+        </a>
       </div>
-
-      <div
-        class="relative flex flex-col justify-center p-8 overflow-hidden glass-panel rounded-3xl md:col-span-2 group">
-        <div class="relative z-10">
-          <h2 class="mb-2 text-3xl">60 Exercices Interactifs</h2>
-          <p class="text-slate-400">Code directement dans ton navigateur. Pas d'installation requise.</p>
-          <a href="./exercices.html"
-            class="inline-block px-6 py-2 mt-4 font-bold text-black transition bg-white rounded-full hover:bg-gray-200">
-            Lancer l'éditeur
-          </a>
-        </div>
-        <pre class="absolute text-xs select-none -right-10 top-4 text-slate-700 font-code opacity-20 rotate-12">
-def success():
-    return "Bravo !"
-while training:
-    level_up()
-        </pre>
-      </div>
-
-      <div class="flex flex-col items-center justify-center p-6 glass-panel rounded-3xl">
-        <div class="mb-1 text-4xl text-green-400 font-display">100%</div>
-        <div class="text-sm text-slate-500">Gratuit & Open Source</div>
-      </div>
-
-      <div class="flex flex-col items-center justify-center p-6 text-center glass-panel rounded-3xl">
-        <div class="mb-2 text-3xl">🐍 + ⚡</div>
-        <h3 class="font-bold">Powered by Pyodide</h3>
-        <p class="mt-2 text-xs text-slate-500">Python tourne dans ton navigateur via WebAssembly.</p>
-      </div>
-
     </div>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div class="p-6 bg-[#161b2c] border border-white/5 rounded-2xl">
+        <div
+          class="flex items-center justify-center w-10 h-10 mb-4 text-xl text-indigo-400 rounded-lg bg-indigo-500/20">📚
+        </div>
+        <h3 class="mb-2 text-xl font-bold">Cours Structurés</h3>
+        <p class="text-sm text-slate-400">Des leçons claires, de l'introduction aux concepts avancés.</p>
+      </div>
+      <div class="p-6 bg-[#161b2c] border border-white/5 rounded-2xl">
+        <div
+          class="flex items-center justify-center w-10 h-10 mb-4 text-xl text-purple-400 rounded-lg bg-purple-500/20">⚡
+        </div>
+        <h3 class="mb-2 text-xl font-bold">Compilateur en ligne</h3>
+        <p class="text-sm text-slate-400">Exécutez votre code Python directement dans le navigateur.</p>
+      </div>
+      <div class="p-6 bg-[#161b2c] border border-white/5 rounded-2xl">
+        <div class="flex items-center justify-center w-10 h-10 mb-4 text-xl text-pink-400 rounded-lg bg-pink-500/20">🏆
+        </div>
+        <h3 class="mb-2 text-xl font-bold">Progression</h3>
+        <p class="text-sm text-slate-400">Gagnez des rangs et suivez votre évolution.</p>
+      </div>
+    </div>
+
   </main>
 
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 
 </html>

@@ -13,6 +13,9 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import renderMathInElement from 'katex/dist/contrib/auto-render';
 
+import confetti from 'canvas-confetti';
+import { getUserStats } from './gamification.js'; // Pour mettre à jour le rang en temps réel si tu veux
+
 // --- VARIABLES ---
 let pyodide = null;
 let currentExercise = null;
@@ -91,6 +94,14 @@ runBtn.addEventListener('click', async () => {
     if (success) {
       statusMsg.textContent = "✅ Validé !";
       statusMsg.className = "font-bold text-green-400";
+      // --- EFFET CONFETTIS ---
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#6366f1', '#a855f7', '#ec4899'] // Couleurs du thème (Indigo/Purple/Pink)
+      });
+      // -----------------------
       if (currentUser) {
         completedExercises.add(currentExercise.id);
         
