@@ -1,4 +1,4 @@
-import"./navbar-CsOS7pzk.js";import{g as ic}from"./_commonjsHelpers-CqkleIqs.js";const oc=[{id:0,category:"Introduction",title:"Bienvenue sur Python",content:`
+import"./navbar-BTaBPfVD.js";import{g as ic}from"./_commonjsHelpers-CqkleIqs.js";const oc=[{id:0,category:"Introduction",title:"Bienvenue sur Python",content:`
                     <p>Bienvenue dans le monde de la programmation ! Ce premier chapitre est ta porte d'entrée. Tu vas découvrir ce qu'est Python et pourquoi c'est le langage roi au lycée.</p>
                     
                     <h3>Petite histoire</h3>
