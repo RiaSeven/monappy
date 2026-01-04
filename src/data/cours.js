@@ -808,5 +808,9 @@ axs[1].plot(x, y2, color="blue") # Graphique du bas</code></pre>
 # Un nuage de points avec régression en 1 ligne !
 sns.regplot(x="taille", y="poids", data=df)</code></pre>
                 `
-      }
+      },
+     {
+  title: "Les Maths",
+  content: "<p>Voici une formule : $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$</p>"
+}, 
     ];

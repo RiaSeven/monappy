@@ -4,7 +4,7 @@ export const exercices = [
     id: 101,
     serie: "Variables & Opérations",
     titre: "Ma première variable",
-    consigne: "Créez une variable nommée <code>score</code>, donnez-lui la valeur <strong>100</strong>, et affichez-la avec <code>print(score)</code>.",
+    consigne: "Créez une variable nommée <code>score</code>, donnez-lui la valeur <strong>100</strong>, et affichez-la avec la fonction <code>print()",
     code: "# Créez la variable score\n\n# Affichez-la",
     validation: { 
       type: "output_list", 
@@ -16,7 +16,7 @@ export const exercices = [
     serie: "Variables & Opérations",
     titre: "Texte (String)",
     consigne: "Créez une variable <code>ville</code> contenant le texte \"Paris\". Affichez cette variable.",
-    code: "ville = \"...\"\nprint(ville)",
+    code: "# votre code ici",
     validation: { 
       type: "output_list", 
       values: ["Paris"] 
@@ -26,8 +26,8 @@ export const exercices = [
     id: 103,
     serie: "Variables & Opérations",
     titre: "L'Addition",
-    consigne: "On a deux pommes et trois poires. Créez les variables <code>pommes = 2</code> et <code>poires = 3</code>. Affichez le total des fruits.",
-    code: "pommes = 2\npoires = 3\n# Affichez la somme",
+    consigne: "On a deux pommes et trois poires. Créez les variables <code>pommes</code> et <code>poires</code> et affectez leur respectivement les valeurs 2 et 3. Affichez le total des fruits.",
+    code: "# Affichez la somme",
     validation: { 
       type: "output_list", 
       values: ["5"] 
@@ -668,4 +668,7 @@ export const exercices = [
       tests: ["assert racine_num(942) == 6", "assert racine_num(12345) == 6", "assert racine_num(9999) == 9"]
     }
   },
+  {
+  consigne: "<p>Utilisez la fonction suivante :</p><pre><code class='language-python'>def ma_fonction():\n    return True</code></pre>"
+},
 ];
